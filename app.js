@@ -1,5 +1,11 @@
 // app.js
-const map = L.map('map').setView([56.1304, -106.3468], 4); // Centered on Canada
+const map = L.map('map', {
+    maxBounds: [
+        [41.675105, -141.0], // South West
+        [83.23324, -52.648098] // North East
+    ],
+    maxBoundsVisble: true // Prevents the user from panning outside the bounds
+}).setView([56.1304, -106.3468], 4);
 
 // Load OpenStreetMap tiles
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -40,8 +46,22 @@ async function addMarker(lat, lng) {
     `).openPopup();
 }
 
+// Function to get city name based on latitude and longitude
+async function getCityName(lat, lng) {
+    try {
+        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`);
+        const data = await response.json();
+        console.log(data);
+        return data.address.city || "Unknown Location"; // Return city name if available
+    } catch (error) {
+        console.error("Error fetching city name:", error);
+        return "Unknown Location";
+    }
+}
+
 // Event listener for map clicks
 map.on('click', function(e) {
     const { lat, lng } = e.latlng; // Get clicked location's latitude and longitude
     addMarker(lat, lng); // Fetch and add weather data for the clicked location
 });
+
