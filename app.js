@@ -110,6 +110,5 @@ async function fetchWeatherData(lat, lng) {
 // Event listener for map clicks
 map.on('click', function(e) {
     const { lat, lng } = e.latlng; // Get clicked location's latitude and longitude
-    addMarker(lat, lng); // Fetch and add weather data for the clicked location
+    fetchWeatherData(lat, lng); // Fetch weather data for the clicked location
 });
-
