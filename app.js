@@ -1,4 +1,6 @@
 // app.js
+let currentMarker = null;
+
 const map = L.map('map', {
     maxBounds: [
         [41.675105, -141.0], // South West
@@ -28,21 +30,47 @@ async function fetchWeatherData(lat, lng) {
 
 
 // Function to add a marker with weather information to the map
-async function addMarker(lat, lng) {
-    const weather = await fetchWeatherData(lat, lng);
-    if (!weather) return;
+// Function to add a marker with weather information to the map
+async function addMarker(lat, lng, weather) {
+    // Reverse geocoding to get the city name
+    const cityName = await getCityName(lat, lng); // Await the city name retrieval
 
-    const { temperature, windspeed, winddirection } = weather;
+    // Remove existing marker if it exists
+    if (currentMarker) {
+        map.removeLayer(currentMarker);
+    }
 
     // Create a new marker and add it to the map
-    const marker = L.marker([lat, lng]).addTo(map);
+    currentMarker = L.marker([lat, lng]).addTo(map);
     
+    // Create a dynamic message based on selected weather metric
+    const metric = document.getElementById('weatherMetric').value;
+    let weatherInfo = '';
+
+    switch (metric) {
+        case 'temperature':
+            weatherInfo = `Temperature: ${weather.temperature}°C`;
+            break;
+        case 'windspeed':
+            weatherInfo = `Wind Speed: ${weather.windspeed} km/h`;
+            break;
+        case 'winddirection':
+            // Note: humidity data is not included in current_weather directly
+            weatherInfo = `Wind Direction: ${weather.winddirection}°`;
+            break;
+        case 'precipitation':
+            // Note: precipitation is generally not included in current_weather
+            weatherInfo = `Precipitation data is not available from the current weather.`;
+            break;
+        default:
+            weatherInfo = `Temperature: ${weather.temperature}°C`;
+    }
+
     // Bind a popup with weather information to the marker
-    marker.bindPopup(`
-        <h3>Current Weather</h3>
-        <p>Temperature: ${temperature}°C</p>
-        <p>Wind Speed: ${windspeed} km/h</p>
-        <p>Wind Direction: ${winddirection}°</p>
+    currentMarker.bindPopup(`
+        <h3>${cityName}</h3>
+        <p>Current Weather</p>
+        <p>${weatherInfo}</p>
     `).openPopup();
 }
 
@@ -77,6 +105,7 @@ async function fetchWeatherData(lat, lng) {
         console.error("Error fetching weather data:", error);
     }
 }
+
 
 // Event listener for map clicks
 map.on('click', function(e) {

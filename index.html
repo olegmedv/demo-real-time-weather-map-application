@@ -2,13 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Real-Time Weather Map</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 </head>
 <body>
+    <div class="dropdown-container">
+        <label for="weatherMetric">Select Weather Metric: </label>
+        <select id="weatherMetric">
+            <option value="temperature">Temperature (°C)</option>
+            <option value="windspeed">Wind Speed (km/h)</option>
+            <option value="winddirection">Wind Direction (°)</option>
+            <option value="precipitation">Precipitation (mm)</option>
+        </select>
+    </div>
+    
     <div id="map"></div>
+    
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="app.js"></script>
 </body>
