@@ -59,6 +59,25 @@ async function getCityName(lat, lng) {
     }
 }
 
+// Function to fetch weather data based on latitude and longitude
+async function fetchWeatherData(lat, lng) {
+    try {
+        const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current_weather=true`);
+        const weatherData = await response.json();
+        console.log(weatherData);
+
+        // Check if the response contains current weather data
+        if (weatherData.current_weather) {
+            const { temperature, windspeed, winddirection, precipitation } = weatherData.current_weather;
+            await addMarker(lat, lng, { temperature, windspeed, winddirection, precipitation }); // Pass the retrieved data
+        } else {
+            console.error("Weather data not found.");
+        }
+    } catch (error) {
+        console.error("Error fetching weather data:", error);
+    }
+}
+
 // Event listener for map clicks
 map.on('click', function(e) {
     const { lat, lng } = e.latlng; // Get clicked location's latitude and longitude
